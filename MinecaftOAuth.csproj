@@ -11,6 +11,7 @@
     <Description>MinecraftLaunch的扩展包，用于账户验证</Description>
     <PackageIcon>icon.png</PackageIcon>
     <Version>1.8.0-preview</Version>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
