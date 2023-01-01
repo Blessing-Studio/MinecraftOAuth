@@ -4,6 +4,24 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>MinecraftOAuth</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Xilu</Authors>
+    <Company>BlessingLife Studio</Company>
+    <Description>MinecraftLaunch的扩展包，用于账户验证</Description>
+    <PackageIcon>icon.png</PackageIcon>
+    <Version>1.8.0-preview</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinecraftLaunch" Version="1.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
