@@ -35,6 +35,7 @@ public partial class YggdrasilAuthenticator
                 progress.Report(value);
         }
         #endregion
+
         var ru = Uri;
         string content = string.Empty;
         Report("开始第三方（Yggdrasil）登录");
