@@ -11,7 +11,7 @@ using Natsurainko.Toolkits.Network;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MinecaftOAuth
+namespace MinecaftOAuth.Authenticator
 {
     /// <summary>
     /// 微软验证器

@@ -10,7 +10,7 @@ using System.Collections;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace MinecaftOAuth
+namespace MinecaftOAuth.Authenticator
 {
     /// <summary>
     /// 第三方验证器

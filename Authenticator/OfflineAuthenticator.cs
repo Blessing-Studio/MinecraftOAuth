@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth
+namespace MinecaftOAuth.Authenticator
 {
     /// <summary>
     /// 离线验证器
