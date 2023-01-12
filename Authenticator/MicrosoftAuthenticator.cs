@@ -159,7 +159,7 @@ namespace MinecaftOAuth.Authenticator
                     using var profileRes = await HttpWrapper.HttpGetAsync("https://api.minecraftservices.com/minecraft/profile", authorization);
                     var microsoftAuthenticationResponse = JsonConvert.DeserializeObject<MicrosoftAuthenticationResponse>(await profileRes.Content.ReadAsStringAsync());
 
-                    Report("微软登录（非刷新验证）完成");
+                    Report("微软登录（刷新验证）完成");
 
                     return new MicrosoftAccount
                     {
