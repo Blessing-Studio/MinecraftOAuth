@@ -140,6 +140,7 @@ namespace MinecaftOAuth.Authenticator
                 Report("开始获取 Minecraft账户基础信息");
                 using var authenticateMinecraftPostRes = await HttpWrapper.HttpPostAsync($"https://api.minecraftservices.com/authentication/login_with_xbox", authenticateMinecraftPost);
                 string access_token = (string)JObject.Parse(await authenticateMinecraftPostRes.Content.ReadAsStringAsync())["access_token"]!;
+
                 #region Check with Game
                 Report("开始检查游戏所有权");
 
