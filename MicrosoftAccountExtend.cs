@@ -1,6 +1,5 @@
 ﻿using Flurl.Http;
 using Newtonsoft.Json.Linq;
-using System.Net;
 
 namespace MinecraftLaunch.Modules.Models.Auth
 {
