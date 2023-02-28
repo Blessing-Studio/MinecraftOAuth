@@ -1,4 +1,5 @@
-﻿using MinecaftOAuth.Module.Base;
+﻿using Flurl;
+using MinecaftOAuth.Module.Base;
 using MinecaftOAuth.Module.Enum;
 using MinecaftOAuth.Module.Models;
 using MinecraftLaunch.Modules.Models.Auth;
@@ -8,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Xml.Linq;
 
 namespace MinecaftOAuth.Authenticator
@@ -17,27 +19,21 @@ namespace MinecaftOAuth.Authenticator
     /// </summary>
     public partial class YggdrasilAuthenticator
     {
-        public IEnumerable<YggdrasilAccount> Auth() => AuthAsync(null).Result;
+        /// <summary>
+        /// 身份验证方法
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<YggdrasilAccount> Auth() => AuthAsync().Result;
 
-        public async ValueTask<IEnumerable<YggdrasilAccount>> AuthAsync(Action<string> func)
+        /// <summary>
+        /// 异步身份验证方法 
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public async ValueTask<IEnumerable<YggdrasilAccount>> AuthAsync()
         {
-            #region
-            IProgress<string> progress = new Progress<string>();
-            ((Progress<string>)progress).ProgressChanged += ProgressChanged!;
-
-            void ProgressChanged(object _, string e) =>
-                func(e);
-
-            void Report(string value)
-            {
-                if (func is not null)
-                    progress.Report(value);
-            }
-            #endregion
-
             var ru = Uri;
             string content = string.Empty;
-            Report("开始第三方（Yggdrasil）登录");
             var requestJson = new
             {
                 clientToken = Guid.NewGuid().ToString("N"),
@@ -53,6 +49,8 @@ namespace MinecaftOAuth.Authenticator
             List<YggdrasilAccount> accounts = new();
             var res = await HttpWrapper.HttpPostAsync($"{Uri}{(string.IsNullOrEmpty(Uri) ? "https://authserver.mojang.com" : "/authserver")}/authenticate", requestJson);
             content = await res.Content.ReadAsStringAsync();
+
+            ClientToken = content.ToJsonEntity<YggdrasilResponse>().ClientToken;
             foreach (var i in content.ToJsonEntity<YggdrasilResponse>().UserAccounts)
                 accounts.Add(new YggdrasilAccount()
                 {
@@ -65,6 +63,64 @@ namespace MinecaftOAuth.Authenticator
                     Password = this.Password
                 });
             return accounts;
+        }
+
+        /// <summary>
+        /// 异步刷新验证方法
+        /// </summary>
+        /// <returns></returns>
+        public async ValueTask<YggdrasilAccount> RefreshAsync(YggdrasilAccount selectProfile)
+        {
+            var content = new
+            {
+                clientToken = selectProfile.ClientToken,
+                accessToken = selectProfile.AccessToken,
+                requestUser = true
+            }.ToJson();
+
+            using var res = await HttpWrapper.HttpPostAsync($"{Uri}{(string.IsNullOrEmpty(Uri) ? "https://authserver.mojang.com" : "/authserver")}/refresh", content);
+            string result = await res.Content.ReadAsStringAsync();
+
+            res.EnsureSuccessStatusCode();
+
+            var responses = result.ToJsonEntity<YggdrasilResponse>().UserAccounts;
+
+            foreach (var i in responses)
+            {
+                if (i.Uuid.Equals(selectProfile.Uuid)) {
+                    return new()
+                    {
+                        AccessToken = result.ToJsonEntity<YggdrasilResponse>().AccessToken,
+                        ClientToken = result.ToJsonEntity<YggdrasilResponse>().ClientToken,
+                        Name = i.Name,
+                        Uuid = Guid.Parse(i.Uuid),
+                        YggdrasilServerUrl = this.Uri!,
+                        Email = this.Email!,
+                        Password = this.Password!
+                    };
+                }
+            }
+            
+            return null!;//执行到此处的原因可能是此角色已删除的原因导致的
+        }
+
+        /// <summary>
+        /// 异步登出方法
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> SignoutAsync()
+        {
+            string content = JsonConvert.SerializeObject(
+                new
+                {
+                    username = Email,
+                    password = Password
+                }
+            );
+            
+            using var res = await HttpWrapper.HttpPostAsync($"{Uri}{(string.IsNullOrEmpty(Uri) ? "https://authserver.mojang.com" : "/authserver")}/signout", content);
+            
+            return res.IsSuccessStatusCode;
         }
 
         /// <summary>
@@ -128,8 +184,8 @@ namespace MinecaftOAuth.Authenticator
         public string? Uri { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
-        public string ClientToken { get; set; } = Guid.NewGuid().ToString("N");
-        public string AccessToken { get; set; } = string.Empty;
+        public string ClientToken { get; set; }
+        //public string AccessToken { get; set; } = string.Empty;
     }
 
     internal class Model
