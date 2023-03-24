@@ -17,13 +17,13 @@ namespace MinecaftOAuth.Authenticator
     /// <summary>
     /// 第三方验证器
     /// </summary>
-    public partial class YggdrasilAuthenticator : AuthenticatorBase<IEnumerable<YggdrasilAccount>>
+    public partial class YggdrasilAuthenticator : AuthenticatorBase
     {
         /// <summary>
         /// 身份验证方法
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<YggdrasilAccount> Auth() => AuthAsync().Result;
+        public new IEnumerable<YggdrasilAccount> Auth() => AuthAsync().Result;
 
         /// <summary>
         /// 异步身份验证方法 
@@ -49,7 +49,7 @@ namespace MinecaftOAuth.Authenticator
             List<YggdrasilAccount> accounts = new();
             var res = await HttpWrapper.HttpPostAsync($"{Uri}{(string.IsNullOrEmpty(Uri) ? "https://authserver.mojang.com" : "/authserver")}/authenticate", requestJson);
             content = await res.Content.ReadAsStringAsync();
-            
+
             ClientToken = content.ToJsonEntity<YggdrasilResponse>().ClientToken;
             foreach (var i in content.ToJsonEntity<YggdrasilResponse>().UserAccounts)
                 accounts.Add(new YggdrasilAccount()
@@ -80,14 +80,13 @@ namespace MinecaftOAuth.Authenticator
 
             using var res = await HttpWrapper.HttpPostAsync($"{Uri}{(string.IsNullOrEmpty(Uri) ? "https://authserver.mojang.com" : "/authserver")}/refresh", content);
             string result = await res.Content.ReadAsStringAsync();
-
+            await Console.Out.WriteLineAsync(result);
             res.EnsureSuccessStatusCode();
-
             var responses = result.ToJsonEntity<YggdrasilResponse>().UserAccounts;
 
             foreach (var i in responses)
             {
-                if (i.Uuid.Equals(selectProfile.Uuid)) {
+                if (i.Uuid.Equals(selectProfile.Uuid.ToString().Replace("-", ""))) {
                     return new()
                     {
                         AccessToken = result.ToJsonEntity<YggdrasilResponse>().AccessToken,

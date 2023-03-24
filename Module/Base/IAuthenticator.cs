@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace MinecaftOAuth.Module.Base
 {
-    internal interface IAuthenticator
+    /// <summary>
+    /// 声明型接口，除利用多态以外毫无用处
+    /// </summary>
+    public interface IAuthenticator
     {
+
     }
 }
