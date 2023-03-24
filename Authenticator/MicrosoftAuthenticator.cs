@@ -16,7 +16,7 @@ namespace MinecaftOAuth.Authenticator
     /// <summary>
     /// 微软验证器
     /// </summary>
-    public partial class MicrosoftAuthenticator : AuthenticatorBase<MicrosoftAccount>
+    public partial class MicrosoftAuthenticator : AuthenticatorBase
     {
         /// <summary>
         /// 获取一次性验证代码
@@ -100,7 +100,7 @@ namespace MinecaftOAuth.Authenticator
             }
         }
 
-        public override async ValueTask<MicrosoftAccount> AuthAsync(Action<string> func)
+        public new async ValueTask<MicrosoftAccount> AuthAsync(Action<string> func)
         {
             #region
             IProgress<string> progress = new Progress<string>();

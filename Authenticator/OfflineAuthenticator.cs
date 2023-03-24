@@ -12,7 +12,7 @@ namespace MinecaftOAuth.Authenticator
     /// <summary>
     /// 离线验证器
     /// </summary>
-    public partial class OfflineAuthenticator : AuthenticatorBase<OfflineAccount>
+    public partial class OfflineAuthenticator : AuthenticatorBase
     {
         public override OfflineAccount Auth() => new OfflineAccount
         {
@@ -22,7 +22,7 @@ namespace MinecaftOAuth.Authenticator
             Uuid = this.Uuid
         };
 
-        public override async ValueTask<OfflineAccount> AuthAsync(Action<string> func = default) => await Task.FromResult(new OfflineAccount
+        public async ValueTask<OfflineAccount> AuthAsync(Action<string> func = default) => await Task.FromResult(new OfflineAccount
         {
             AccessToken = Guid.NewGuid().ToString("N"),
             ClientToken = Guid.NewGuid().ToString("N"),
