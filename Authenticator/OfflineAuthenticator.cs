@@ -1,4 +1,5 @@
-﻿using MinecaftOAuth.Module.Base;
+﻿using MinecaftOAuth.Authenticator;
+using MinecaftOAuth.Module.Base;
 using MinecraftLaunch.Modules.Models.Auth;
 using Natsurainko.Toolkits.Values;
 using System;
@@ -7,23 +8,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Authenticator
-{
+namespace MinecaftOAuth.Authenticator {
     /// <summary>
     /// 离线验证器
     /// </summary>
-    public partial class OfflineAuthenticator : AuthenticatorBase
-    {
-        public override OfflineAccount Auth() => new OfflineAccount
-        {
+    public partial class OfflineAuthenticator : AuthenticatorBase {
+        /// <returns>离线账户实例</returns>
+        public override OfflineAccount Auth() => new OfflineAccount {
             AccessToken = Guid.NewGuid().ToString("N"),
             ClientToken = Guid.NewGuid().ToString("N"),
             Name = this.Name,
             Uuid = this.Uuid
         };
 
-        public async ValueTask<OfflineAccount> AuthAsync(Action<string> func = default) => await Task.FromResult(new OfflineAccount
-        {
+
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public async ValueTask<OfflineAccount> AuthAsync(Action<string> func = default) => await Task.FromResult(new OfflineAccount {
             AccessToken = Guid.NewGuid().ToString("N"),
             ClientToken = Guid.NewGuid().ToString("N"),
             Name = this.Name,
@@ -31,10 +32,8 @@ namespace MinecaftOAuth.Authenticator
         });
     }
 
-    partial class OfflineAuthenticator
-    {
-        public OfflineAuthenticator(string name, Guid uuid = default)
-        {
+    partial class OfflineAuthenticator {
+        public OfflineAuthenticator(string name, Guid uuid = default) {
             this.Name = name;
             this.Uuid = uuid;
 

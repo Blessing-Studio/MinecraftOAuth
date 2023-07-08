@@ -1,33 +1,33 @@
 ﻿using Flurl.Http;
 using Newtonsoft.Json.Linq;
 
-namespace MinecraftLaunch.Modules.Models.Auth
-{
-    public static partial class MicrosoftAccountExtend
-    {
+namespace MinecraftLaunch.Modules.Models.Auth {
+    /// <summary>
+    /// 微软账户的基本操作扩展
+    /// </summary>
+    public static partial class MicrosoftAccountExtend {
         /// <summary>
         /// 异步上传皮肤至 Mojang 服务器
         /// </summary>
         /// <param name="path">皮肤文件地址</param>
-        public static async ValueTask<bool> SkinUploadAsync(this MicrosoftAccount account, string path)
-        {
-            if (File.Exists(path))
-            {
-                var res = await UploadSkinAPI.AllowAnyHttpStatus()
+        public static async ValueTask<bool> SkinUploadAsync(this MicrosoftAccount account, string path) {
+            if (File.Exists(path)) {
+                var result = await UploadSkinAPI.AllowAnyHttpStatus()
                     .WithOAuthBearerToken(account.AccessToken).PostMultipartAsync(content =>
                         content.AddString("variant", "slim")
                             .AddFile("file", path));
+                var json = await result.GetStringAsync();
 
-                var json = await res.GetStringAsync();
-
-                if (!string.IsNullOrEmpty(json))
-                {
+                if (!string.IsNullOrEmpty(json)) {
                     JObject model = new(json);
-                    if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString())
+                    if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
                         return true;
+                    }
                 }
+            } else {
+                throw new Exception("错误：此皮肤路径不存在！");
             }
-            else throw new Exception("错误：此皮肤路径不存在！");
+
             return false;
         }
 
@@ -35,20 +35,18 @@ namespace MinecraftLaunch.Modules.Models.Auth
         /// 异步上传皮肤至 Mojang 服务器
         /// </summary>
         /// <param name="path">皮肤文件地址</param>
-        public static async ValueTask<bool> SkinUploadAsync(this MicrosoftAccount account, FileInfo path)
-        {
-            var res = await UploadSkinAPI.AllowAnyHttpStatus()
+        public static async ValueTask<bool> SkinUploadAsync(this MicrosoftAccount account, FileInfo path) {
+            var result = await UploadSkinAPI.AllowAnyHttpStatus()
                 .WithOAuthBearerToken(account.AccessToken).PostMultipartAsync(content =>
                     content.AddString("variant", "slim")
                         .AddFile("file", path.FullName));
+            var json = await result.GetStringAsync();
 
-            var json = await res.GetStringAsync();
-
-            if (!string.IsNullOrEmpty(json))
-            {
+            if (!string.IsNullOrEmpty(json)) {
                 JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString())
+                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
                     return true;
+                }
             }
 
             return false;
@@ -59,18 +57,18 @@ namespace MinecraftLaunch.Modules.Models.Auth
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public static async ValueTask<bool> SkinResetAsync(this MicrosoftAccount account)
-        {
-            var res = await ResetSkinAPI.AllowAnyHttpStatus()
-            .WithOAuthBearerToken(account.AccessToken).DeleteAsync();
+        public static async ValueTask<bool> SkinResetAsync(this MicrosoftAccount account) {
+            var result = await ResetSkinAPI.AllowAnyHttpStatus()
+                .WithOAuthBearerToken(account.AccessToken).DeleteAsync();
+            var json = await result.GetStringAsync();
 
-            var json = await res.GetStringAsync();
-            if (!string.IsNullOrEmpty(json))
-            {
+            if (!string.IsNullOrEmpty(json)) {
                 JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString())
+                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
                     return true;
+                }
             }
+
             return false;
         }
 
@@ -79,17 +77,17 @@ namespace MinecraftLaunch.Modules.Models.Auth
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public static async ValueTask<bool> CapeHideAsync(this MicrosoftAccount account)
-        {
-            var res = await CapeAPI.AllowAnyHttpStatus().WithOAuthBearerToken(account.AccessToken).DeleteAsync();
+        public static async ValueTask<bool> CapeHideAsync(this MicrosoftAccount account) {
+            var result = await CapeAPI.AllowAnyHttpStatus().WithOAuthBearerToken(account.AccessToken).DeleteAsync();
 
-            var json = await res.GetStringAsync();
-            if (!string.IsNullOrEmpty(json))
-            {
+            var json = await result.GetStringAsync();
+            if (!string.IsNullOrEmpty(json)) {
                 JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString())
+                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
                     return true;
+                }
             }
+
             return false;
         }
 
@@ -98,21 +96,20 @@ namespace MinecraftLaunch.Modules.Models.Auth
         /// </summary>
         /// <param name="capeId">披风 Id</param>
         /// <returns></returns>
-        public static async ValueTask<bool> ShowCapeAsync(this MicrosoftAccount account, string capeId)
-        {
-            var content = new
-            {
+        public static async ValueTask<bool> ShowCapeAsync(this MicrosoftAccount account, string capeId) {
+            var content = new {
                 capeId = capeId
             };
-            var res = await CapeAPI.AllowAnyHttpStatus().WithOAuthBearerToken(account.AccessToken).PutJsonAsync(content);
+            var result = await CapeAPI.AllowAnyHttpStatus().WithOAuthBearerToken(account.AccessToken).PutJsonAsync(content);
 
-            var json = await res.GetStringAsync();
-            if (!string.IsNullOrEmpty(json))
-            {
+            var json = await result.GetStringAsync();
+            if (!string.IsNullOrEmpty(json)) {
                 JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString())
+                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
                     return true;
+                }
             }
+
             return false;
         }
 
@@ -121,13 +118,13 @@ namespace MinecraftLaunch.Modules.Models.Auth
         /// </summary>
         /// <param name="newName">新的用户名</param>
         /// <returns></returns>
-        public static async ValueTask<bool> UsernameChangeAsync(this MicrosoftAccount account, string newName)
-        {
+        public static async ValueTask<bool> UsernameChangeAsync(this MicrosoftAccount account, string newName) {
             var fullUrl = $"{NameChangeAPI}{newName}";
-            var code = (await fullUrl.WithOAuthBearerToken(account.AccessToken).PutAsync()).StatusCode;
+            var result = await fullUrl.WithOAuthBearerToken(account.AccessToken).PutAsync();
 
-            if (code is 200)
+            if (result.StatusCode is 200) {
                 return true;
+            }
 
             return false;
         }
@@ -137,28 +134,30 @@ namespace MinecraftLaunch.Modules.Models.Auth
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public static async ValueTask<bool> CheckNameIsUsableAsync(this MicrosoftAccount account, string newName)
-        {
+        public static async ValueTask<bool> CheckNameIsUsableAsync(this MicrosoftAccount account, string newName) {
             var fullUrl = $"{NameChangeAPI}{newName}/available";
             var res = (await fullUrl.WithOAuthBearerToken(account.AccessToken).GetStringAsync());
 
-            if (!string.IsNullOrEmpty(res))
-            {
+            if (!string.IsNullOrEmpty(res)) {
                 JObject objects = new(res);
-                if (objects["status"]!.ToString().Contains("NOT"))
+                if (objects["status"]!.ToString().Contains("NOT")) {
                     return false;
+                }
+            } else {
+                return false;
             }
-            else return false;
 
             return true;
         }
     }
 
-    partial class MicrosoftAccountExtend
-    {
-        const string NameChangeAPI = "https://api.minecraftservices.com/minecraft/profile/name/";
-        const string UploadSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins";
-        const string ResetSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins/active";
-        const string CapeAPI = "https://api.minecraftservices.com/minecraft/profile/capes/active";
+    partial class MicrosoftAccountExtend {
+        private const string NameChangeAPI = "https://api.minecraftservices.com/minecraft/profile/name/";
+
+        private const string UploadSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins";
+
+        private const string CapeAPI = "https://api.minecraftservices.com/minecraft/profile/capes/active";
+
+        private const string ResetSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins/active";
     }
 }

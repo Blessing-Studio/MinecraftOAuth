@@ -6,10 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Models
-{
-    public class XBLAuthenticateRequestModel
-    {
+namespace MinecaftOAuth.Models {
+    public class XBLAuthenticateRequestModel {
         [JsonProperty("Properties")]
         public XBLAuthenticatePropertiesModel Properties { get; set; } = new XBLAuthenticatePropertiesModel();
 
@@ -20,8 +18,7 @@ namespace MinecaftOAuth.Models
         public string TokenType { get; set; } = "JWT";
     }
 
-    public class XBLAuthenticateResponseModel
-    {
+    public class XBLAuthenticateResponseModel {
         [JsonProperty("IssueInstant")]
         public string IssueInstant { get; set; }
 
@@ -35,8 +32,7 @@ namespace MinecaftOAuth.Models
         public DisplayClaimsModel DisplayClaims { get; set; }
     }
 
-    public class XBLAuthenticatePropertiesModel
-    {
+    public class XBLAuthenticatePropertiesModel {
         [JsonProperty("AuthMethod")]
         public string AuthMethod { get; set; } = "RPS";
 
@@ -46,8 +42,7 @@ namespace MinecaftOAuth.Models
         [JsonProperty("RpsTicket")]
         public string RpsTicket { get; set; } = "d=<access token>";
     }
-    public class DisplayClaimsModel
-    {
+    public class DisplayClaimsModel {
         [JsonProperty("xui")]
         public List<JObject> Xui { get; set; }
     }

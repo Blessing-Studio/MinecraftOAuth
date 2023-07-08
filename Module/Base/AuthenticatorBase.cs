@@ -6,13 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Base
-{
+namespace MinecaftOAuth.Module.Base {
     /// <summary>
     /// 验证器抽象基类
     /// </summary>
-    public abstract class AuthenticatorBase
-    {
+    public abstract class AuthenticatorBase {
         /// <summary>
         /// 验证方法
         /// </summary>

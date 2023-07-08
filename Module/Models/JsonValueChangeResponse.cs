@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Models
-{
-    public class JsonValueChangeResponse
-    {
+namespace MinecaftOAuth.Module.Models {
+    public class JsonValueChangeResponse {
         /// <summary>
         /// 
         /// </summary>

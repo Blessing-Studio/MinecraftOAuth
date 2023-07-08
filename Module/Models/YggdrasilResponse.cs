@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Models
-{
-    public class YggdrasilResponse
-    {
+namespace MinecaftOAuth.Module.Models {
+    public class YggdrasilResponse {
         /// <summary>
         /// 验证令牌
         /// </summary>
@@ -22,12 +20,11 @@ namespace MinecaftOAuth.Module.Models
     }
 }
 
-public class AvailableProfiles
-{
+public class AvailableProfiles {
     /// <summary>
     /// 游戏角色Uuid
     /// </summary>
-    [JsonProperty("id")]public string Uuid { get; set; }
+    [JsonProperty("id")] public string Uuid { get; set; }
     /// <summary>
     /// 游戏角色名
     /// </summary>

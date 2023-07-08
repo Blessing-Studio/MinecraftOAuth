@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Models
-{
-    public class XSTSAuthenticateRequestModel
-    {
+namespace MinecaftOAuth.Models {
+    public class XSTSAuthenticateRequestModel {
         [JsonProperty("Properties")]
         public XSTSAuthenticatePropertiesModels Properties { get; set; } = new XSTSAuthenticatePropertiesModels();
 
@@ -19,8 +17,7 @@ namespace MinecaftOAuth.Models
         public string TokenType { get; set; } = "JWT";
     }
 
-    public class XSTSAuthenticateResponseModel
-    {
+    public class XSTSAuthenticateResponseModel {
         [JsonProperty("IssueInstant")]
         public string IssueInstant { get; set; }
 
@@ -34,8 +31,7 @@ namespace MinecaftOAuth.Models
         public DisplayClaimsModel DisplayClaims { get; set; }
     }
 
-    public class XSTSAuthenticateErrorModel
-    {
+    public class XSTSAuthenticateErrorModel {
         [JsonProperty("Identity")]
         public string Identity { get; set; }
 
@@ -49,8 +45,7 @@ namespace MinecaftOAuth.Models
         public string Redirect { get; set; }
     }
 
-    public class XSTSAuthenticatePropertiesModels
-    {
+    public class XSTSAuthenticatePropertiesModels {
         [JsonProperty("SandboxId")]
         public string SandboxId { get; set; } = "RETAIL";
 

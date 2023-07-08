@@ -6,10 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Models
-{
-    public class MicrosoftAuthenticationResponse
-    {
+namespace MinecaftOAuth.Module.Models {
+    public class MicrosoftAuthenticationResponse {
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -31,8 +29,7 @@ namespace MinecaftOAuth.Module.Models
         public string Time { get; set; }
     }
 
-    public class SkinModel
-    {
+    public class SkinModel {
         [JsonProperty("id")]
         public string Id { get; set; }
 

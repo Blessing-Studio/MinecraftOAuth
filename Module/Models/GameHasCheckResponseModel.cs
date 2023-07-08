@@ -5,17 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Models
-{
-    public class OwnershipItem
-    {
+namespace MinecaftOAuth.Module.Models {
+    public class OwnershipItem {
         [JsonProperty("name")] public string Name { get; set; }
 
         [JsonProperty("signature")] public string Signature { get; set; }
     }
 
-    public class GameHasCheckResponseModel
-    {
+    public class GameHasCheckResponseModel {
         [JsonProperty("items")] public List<OwnershipItem> Items { get; set; }
 
         [JsonProperty("signature")] public string Signature { get; set; }
