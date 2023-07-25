@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Models {
+namespace MinecraftOAuth.Models {
     public class XSTSAuthenticateRequestModel {
         [JsonProperty("Properties")]
         public XSTSAuthenticatePropertiesModels Properties { get; set; } = new XSTSAuthenticatePropertiesModels();

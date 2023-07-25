@@ -1,11 +1,11 @@
-﻿using MinecaftOAuth.Module.Base;
-using MinecaftOAuth.Module.Models;
+﻿using MinecraftOAuth.Module.Base;
+using MinecraftOAuth.Module.Models;
 using MinecraftLaunch.Modules.Models.Auth;
 using MinecraftLaunch.Modules.Toolkits;
 using Natsurainko.Toolkits.Network;
 using Newtonsoft.Json;
 
-namespace MinecaftOAuth.Authenticator {
+namespace MinecraftOAuth.Authenticator {
     /// <summary>
     /// 第三方验证器
     /// </summary>

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Base {
+namespace MinecraftOAuth.Module.Base {
     /// <summary>
     /// 验证器抽象基类
     /// </summary>

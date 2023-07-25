@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Models {
+namespace MinecraftOAuth.Module.Models {
     public class YggdrasilResponse {
         /// <summary>
         /// 验证令牌

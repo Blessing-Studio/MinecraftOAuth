@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Enum {
+namespace MinecraftOAuth.Module.Enum {
     /// <summary>
     /// 验证类型
     /// </summary>

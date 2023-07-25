@@ -1,5 +1,5 @@
-﻿using MinecaftOAuth.Authenticator;
-using MinecaftOAuth.Module.Base;
+﻿using MinecraftOAuth.Authenticator;
+using MinecraftOAuth.Module.Base;
 using MinecraftLaunch.Modules.Models.Auth;
 using Natsurainko.Toolkits.Values;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Authenticator {
+namespace MinecraftOAuth.Authenticator {
     /// <summary>
     /// 离线验证器
     /// </summary>

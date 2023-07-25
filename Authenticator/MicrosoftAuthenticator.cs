@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using MinecaftOAuth.Models;
-using MinecaftOAuth.Module.Base;
-using MinecaftOAuth.Module.Enum;
-using MinecaftOAuth.Module.Models;
+using MinecraftOAuth.Models;
+using MinecraftOAuth.Module.Base;
+using MinecraftOAuth.Module.Enum;
+using MinecraftOAuth.Module.Models;
 using MinecraftLaunch.Modules.Enum;
 using MinecraftLaunch.Modules.Models.Auth;
 using MinecraftLaunch.Modules.Toolkits;
@@ -11,7 +11,7 @@ using Natsurainko.Toolkits.Network;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MinecaftOAuth.Authenticator {
+namespace MinecraftOAuth.Authenticator {
     /// <summary>
     /// 微软验证器
     /// </summary>

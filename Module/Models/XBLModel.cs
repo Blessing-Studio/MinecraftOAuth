@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Models {
+namespace MinecraftOAuth.Models {
     public class XBLAuthenticateRequestModel {
         [JsonProperty("Properties")]
         public XBLAuthenticatePropertiesModel Properties { get; set; } = new XBLAuthenticatePropertiesModel();

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinecaftOAuth.Module.Models {
+namespace MinecraftOAuth.Module.Models {
     public class MicrosoftAuthenticationResponse {
         [JsonProperty("id")]
         public string Id { get; set; }

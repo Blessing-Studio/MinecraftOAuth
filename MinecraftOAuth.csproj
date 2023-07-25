@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>MinecraftOAuth</Title>
@@ -10,21 +10,21 @@
     <Company>BlessingLife Studio</Company>
     <Description>MinecraftLaunch的扩展包，用于账户验证</Description>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>1.9.2</Version>
+    <Version>1.9.3</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageId>MinecraftOAuth</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl.Http" Version="4.0.0-pre3" />
-    <PackageReference Include="MinecraftLaunch" Version="1.7.0-preview2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="icon.png">
+    <None Include="..\MinecraftLaunch\icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl.Http" Version="4.0.0-pre3" />
+    <PackageReference Include="MinecraftLaunch" Version="1.7.0-preview2" />
   </ItemGroup>
 
 </Project>
