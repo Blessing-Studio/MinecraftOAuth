@@ -10,7 +10,7 @@
     <Company>BlessingLife Studio</Company>
     <Description>MinecraftLaunch的扩展包，用于账户验证</Description>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>1.9.3</Version>
+    <Version>1.9.5-preview8</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageId>MinecraftOAuth</PackageId>
   </PropertyGroup>
@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="4.0.0-pre3" />
-    <PackageReference Include="MinecraftLaunch" Version="1.7.0-preview2" />
+    <PackageReference Include="MinecraftLaunch" Version="1.9.5-preview8" />
   </ItemGroup>
 
 </Project>

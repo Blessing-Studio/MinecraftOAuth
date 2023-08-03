@@ -1,7 +1,7 @@
 ﻿using MinecraftOAuth.Module.Base;
 using MinecraftOAuth.Module.Models;
 using MinecraftLaunch.Modules.Models.Auth;
-using MinecraftLaunch.Modules.Toolkits;
+using MinecraftLaunch.Modules.Utils;
 using Natsurainko.Toolkits.Network;
 using Newtonsoft.Json;
 
@@ -120,7 +120,7 @@ namespace MinecraftOAuth.Authenticator {
 
     partial class YggdrasilAuthenticator {
         public YggdrasilAuthenticator() { }
-
+        
         /// <summary>
         /// 标准第三方验证器构造方法
         /// </summary>

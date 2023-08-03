@@ -6,10 +6,10 @@ using MinecraftOAuth.Module.Enum;
 using MinecraftOAuth.Module.Models;
 using MinecraftLaunch.Modules.Enum;
 using MinecraftLaunch.Modules.Models.Auth;
-using MinecraftLaunch.Modules.Toolkits;
 using Natsurainko.Toolkits.Network;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MinecraftLaunch.Modules.Utils;
 
 namespace MinecraftOAuth.Authenticator {
     /// <summary>
