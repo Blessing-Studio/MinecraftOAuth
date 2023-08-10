@@ -162,7 +162,7 @@ namespace MinecraftOAuth.Authenticator {
                 string json = await gameHasRes.Content.ReadAsStringAsync();
                 var itemArray = json.ToJsonEntity<GameHasCheckResponseModel>();
 
-                if (itemArray != null) {
+                if (itemArray.Items != null) {
                     hasGame = itemArray.Items.Count > 0 ? true : false;
                 } else {
                     hasGame = true;

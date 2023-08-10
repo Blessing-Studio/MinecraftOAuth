@@ -10,7 +10,7 @@
     <Company>BlessingLife Studio</Company>
     <Description>MinecraftLaunch的扩展包，用于账户验证</Description>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>1.9.5-preview8</Version>
+    <Version>1.9.5</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageId>MinecraftOAuth</PackageId>
   </PropertyGroup>

@@ -5,7 +5,15 @@ namespace MinecraftLaunch.Modules.Models.Auth {
     /// <summary>
     /// 微软账户的基本操作扩展
     /// </summary>
-    public static partial class MicrosoftAccountExtend {
+    public static class MicrosoftAccountExtend {
+        private const string NameChangeAPI = "https://api.minecraftservices.com/minecraft/profile/name/";
+
+        private const string UploadSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins";
+
+        private const string CapeAPI = "https://api.minecraftservices.com/minecraft/profile/capes/active";
+
+        private const string ResetSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins/active";
+
         /// <summary>
         /// 异步上传皮肤至 Mojang 服务器
         /// </summary>
@@ -149,15 +157,5 @@ namespace MinecraftLaunch.Modules.Models.Auth {
 
             return true;
         }
-    }
-
-    partial class MicrosoftAccountExtend {
-        private const string NameChangeAPI = "https://api.minecraftservices.com/minecraft/profile/name/";
-
-        private const string UploadSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins";
-
-        private const string CapeAPI = "https://api.minecraftservices.com/minecraft/profile/capes/active";
-
-        private const string ResetSkinAPI = "https://api.minecraftservices.com/minecraft/profile/skins/active";
     }
 }
