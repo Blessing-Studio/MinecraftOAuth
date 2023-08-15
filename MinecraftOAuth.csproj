@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="4.0.0-pre3" />
-    <PackageReference Include="MinecraftLaunch" Version="1.9.5-preview8" />
+    <PackageReference Include="MinecraftLaunch" Version="1.9.6-preview1" />
   </ItemGroup>
 
 </Project>

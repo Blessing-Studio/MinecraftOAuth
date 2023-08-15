@@ -16,6 +16,7 @@ namespace MinecraftOAuth.Module.Base {
         /// </summary>
         /// <returns>游戏角色信息</returns>
         public virtual ValueTask<Account> AuthAsync(Action<string> func) { throw new Exception(); }
+
         /// <summary>
         /// 验证方法
         /// </summary>
