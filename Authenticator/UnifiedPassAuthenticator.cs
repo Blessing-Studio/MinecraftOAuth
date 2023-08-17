@@ -47,7 +47,7 @@ namespace MinecraftOAuth.Authenticator {
         /// <returns></returns>
         public new async ValueTask<UnifiedPassAccount> AuthAsync(Action<string> func = default!) {
             string authUrl = $"{BaseApi}{ServerId}/authserver/authenticate";
-            var json = new {
+            var content = new {
                 agent = new {
                     name = "MinecraftLaunch",
                     version = 1.00
@@ -70,6 +70,55 @@ namespace MinecraftOAuth.Authenticator {
                 Uuid = Guid.Parse(user.Uuid),
                 ServerId = ServerId,
             };
+        }
+
+        /// <summary>
+        /// 异步刷新方法
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public async ValueTask<UnifiedPassAccount> RefreshAsync(UnifiedPassAccount account) {
+            var content = new {
+                accessToken = account.AccessToken,
+                clientToken = account.ClientToken,
+                requestUser = true
+            }.ToJson();
+
+            using var responseMessage = await HttpWrapper.HttpPostAsync($"{BaseApi}{ServerId}/authserver/refresh", content);
+            string json = await responseMessage.Content.ReadAsStringAsync();
+
+            YggdrasilResponse model = json.ToJsonEntity<YggdrasilResponse>();
+            var user = model.UserAccounts.FirstOrDefault();
+
+            return new UnifiedPassAccount() {
+                AccessToken = model.AccessToken,
+                ClientToken = model.ClientToken,
+                Name = user!.Name,
+                Uuid = Guid.Parse(user.Uuid),
+                ServerId = ServerId,
+            };
+        }
+
+        public async ValueTask<bool> ValidateAsync(UnifiedPassAccount account) {
+            string url = $"{BaseApi}{ServerId}/authserver/validate";
+            var content = new {
+                accessToken = account.AccessToken,
+                clientToken = account.ClientToken,
+            }.ToJson();
+
+            using var responseMessage = await HttpWrapper.HttpPostAsync(url, content);
+            return responseMessage.IsSuccessStatusCode;
+        }
+
+        public async ValueTask<bool> SignoutAsync() {
+            string url = $"{BaseApi}{ServerId}/authserver/signout";
+            var content = new {
+                username = UserName,
+                password = Password,
+            }.ToJson();
+
+            using var responseMessage = await HttpWrapper.HttpPostAsync(url, content);
+            return responseMessage.IsSuccessStatusCode;
         }
     }
 }
