@@ -54,11 +54,11 @@ namespace MinecraftOAuth.Authenticator {
                 },
                 username = UserName,
                 password = Password,
-                clientToken = string.Empty,
+                clientToken = "null",
                 requestUser = true,
             }.ToJson();
 
-            using var httpResponse = await HttpWrapper.HttpPostAsync(authUrl, json);
+            using var httpResponse = await HttpWrapper.HttpPostAsync(authUrl, content);
             string userDataJson = await httpResponse.Content.ReadAsStringAsync();
             var model = userDataJson.ToJsonEntity<YggdrasilResponse>();
 
@@ -99,6 +99,11 @@ namespace MinecraftOAuth.Authenticator {
             };
         }
 
+        /// <summary>
+        /// 异步令牌验证方法
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
         public async ValueTask<bool> ValidateAsync(UnifiedPassAccount account) {
             string url = $"{BaseApi}{ServerId}/authserver/validate";
             var content = new {
@@ -110,6 +115,10 @@ namespace MinecraftOAuth.Authenticator {
             return responseMessage.IsSuccessStatusCode;
         }
 
+        /// <summary>
+        ///  异步账户登出方法
+        /// </summary>
+        /// <returns></returns>
         public async ValueTask<bool> SignoutAsync() {
             string url = $"{BaseApi}{ServerId}/authserver/signout";
             var content = new {
