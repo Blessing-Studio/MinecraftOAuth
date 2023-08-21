@@ -3,6 +3,7 @@ using MinecraftLaunch.Modules.Utils;
 using MinecraftOAuth.Module.Base;
 using MinecraftOAuth.Module.Models;
 using Natsurainko.Toolkits.Network;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,16 +48,16 @@ namespace MinecraftOAuth.Authenticator {
         /// <returns></returns>
         public new async ValueTask<UnifiedPassAccount> AuthAsync(Action<string> func = default!) {
             string authUrl = $"{BaseApi}{ServerId}/authserver/authenticate";
-            var content = new {
+            var content = JsonConvert.SerializeObject(new {
                 agent = new {
                     name = "MinecraftLaunch",
                     version = 1.00
                 },
                 username = UserName,
                 password = Password,
-                clientToken = "null",
+                clientToken = null as string,
                 requestUser = true,
-            }.ToJson();
+            }, Formatting.Indented);
 
             using var httpResponse = await HttpWrapper.HttpPostAsync(authUrl, content);
             string userDataJson = await httpResponse.Content.ReadAsStringAsync();

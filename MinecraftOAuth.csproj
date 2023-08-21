@@ -7,10 +7,10 @@
     <Title>MinecraftOAuth</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Xilu</Authors>
-    <Company>BlessingLife Studio</Company>
+    <Company>Blessing Studio</Company>
     <Description>MinecraftLaunch的扩展包，用于账户验证</Description>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>1.9.6-preview1</Version>
+    <Version>1.9.6-preview3</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageId>MinecraftOAuth</PackageId>
   </PropertyGroup>
