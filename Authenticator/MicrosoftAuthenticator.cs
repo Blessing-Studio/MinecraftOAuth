@@ -94,25 +94,10 @@ namespace MinecraftOAuth.Authenticator {
         }
 
         public new async ValueTask<MicrosoftAccount> AuthAsync(Action<string> func) {
-            #region Other
-            IProgress<string> progress = new Progress<string>();
-            ((Progress<string>)progress).ProgressChanged += ProgressChanged!;
-
-            void ProgressChanged(object _, string e) =>
-                func(e);
-
-            void Report(string value) {
-                if (func != null) {
-                    progress.Report(value);
-                }
-            }
-
-            #endregion
-
             #region Authenticate with Refresh
 
             if (AuthType is AuthType.Refresh) {
-                progress.Report("开始获取 AccessToken");
+                func("开始获取 AccessToken");
                 var url = "https://login.live.com/oauth20_token.srf";
 
                 var content = new {
@@ -130,7 +115,7 @@ namespace MinecraftOAuth.Authenticator {
 
             #region Authenticate with XBL
 
-            progress.Report("开始获取 XBL 令牌");
+            func("开始获取 XBL 令牌");
 
             var rpsTicket = $"d={AccessToken}";
             var xblContent = new {
@@ -153,7 +138,7 @@ namespace MinecraftOAuth.Authenticator {
 
             #region Authenticate with XSTS
 
-            Report("开始获取 XSTS令牌");
+            func("开始获取 XSTS令牌");
 
             var xstsContent = new {
                 Properties = new {
@@ -174,7 +159,7 @@ namespace MinecraftOAuth.Authenticator {
 
             #region Authenticate with Minecraft
 
-            Report("开始获取 Minecraft账户基础信息");
+            func("开始获取 Minecraft账户基础信息");
             var authenticateMinecraftPost = new {
                 identityToken = $"XBL3.0 x={xBLResModel.DisplayClaims.Xui[0]
                 .GetProperty("uhs")
@@ -190,7 +175,7 @@ namespace MinecraftOAuth.Authenticator {
             #endregion
 
             #region Check with Game
-            Report("开始检查游戏所有权");
+            func("开始检查游戏所有权");
             bool hasGame = false;
             try {
                 using var gameHasRes = await "https://api.minecraftservices.com/entitlements/mcstore"
@@ -214,7 +199,7 @@ namespace MinecraftOAuth.Authenticator {
             #region Get the profile
 
             if (hasGame) {
-                Report("开始获取 玩家Profile");
+                func("开始获取 玩家Profile");
                 using var profileRes = await "https://api.minecraftservices.com/minecraft/profile"
                     .WithHeader("Authorization", $"Bearer {access_token}")
                     .GetAsync();
@@ -222,7 +207,7 @@ namespace MinecraftOAuth.Authenticator {
                 var microsoftAuthenticationResponse = (await profileRes.GetStringAsync())
                     .ToJsonEntity<MicrosoftAuthenticationResponse>();
 
-                Report("微软登录（非刷新验证）完成");
+                func("微软登录（非刷新验证）完成");
 
                 return new MicrosoftAccount {
                     AccessToken = access_token,
