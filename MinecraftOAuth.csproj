@@ -13,6 +13,7 @@
     <Version>1.9.6-preview3</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageId>MinecraftOAuth</PackageId>
+	  <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="4.0.0-pre3" />
-    <PackageReference Include="MinecraftLaunch" Version="1.9.6-preview1" />
+    <PackageReference Include="MinecraftLaunch" Version="1.9.6-preview5" />
   </ItemGroup>
 
 </Project>

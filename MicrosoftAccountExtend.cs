@@ -1,5 +1,5 @@
 ﻿using Flurl.Http;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace MinecraftLaunch.Modules.Models.Auth {
     /// <summary>
@@ -27,8 +27,8 @@ namespace MinecraftLaunch.Modules.Models.Auth {
                 var json = await result.GetStringAsync();
 
                 if (!string.IsNullOrEmpty(json)) {
-                    JObject model = new(json);
-                    if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
+                    JsonNode model = JsonNode.Parse(json)!;
+                    if (account.Uuid.ToString() == model["id"]!.GetValue<string>() && account.Name == model["name"]!.GetValue<string>()) {
                         return true;
                     }
                 }
@@ -47,12 +47,13 @@ namespace MinecraftLaunch.Modules.Models.Auth {
             var result = await UploadSkinAPI.AllowAnyHttpStatus()
                 .WithOAuthBearerToken(account.AccessToken).PostMultipartAsync(content =>
                     content.AddString("variant", "slim")
-                        .AddFile("file", path.FullName));
+                    .AddFile("file", path.FullName));
+
             var json = await result.GetStringAsync();
 
             if (!string.IsNullOrEmpty(json)) {
-                JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
+                JsonNode model = JsonNode.Parse(json)!;
+                if (account.Uuid.ToString() == model["id"]!.GetValue<string>() && account.Name == model["name"]!.GetValue<string>()) {
                     return true;
                 }
             }
@@ -68,11 +69,12 @@ namespace MinecraftLaunch.Modules.Models.Auth {
         public static async ValueTask<bool> SkinResetAsync(this MicrosoftAccount account) {
             var result = await ResetSkinAPI.AllowAnyHttpStatus()
                 .WithOAuthBearerToken(account.AccessToken).DeleteAsync();
+
             var json = await result.GetStringAsync();
 
             if (!string.IsNullOrEmpty(json)) {
-                JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
+                JsonNode model = JsonNode.Parse(json)!;
+                if (account.Uuid.ToString() == model["id"]!.GetValue<string>() && account.Name == model["name"]!.GetValue<string>()) {
                     return true;
                 }
             }
@@ -86,12 +88,14 @@ namespace MinecraftLaunch.Modules.Models.Auth {
         /// <param name="account"></param>
         /// <returns></returns>
         public static async ValueTask<bool> CapeHideAsync(this MicrosoftAccount account) {
-            var result = await CapeAPI.AllowAnyHttpStatus().WithOAuthBearerToken(account.AccessToken).DeleteAsync();
+            var result = await CapeAPI.AllowAnyHttpStatus()
+                .WithOAuthBearerToken(account.AccessToken)
+                .DeleteAsync();
 
             var json = await result.GetStringAsync();
             if (!string.IsNullOrEmpty(json)) {
-                JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
+                JsonNode model = JsonNode.Parse(json)!;
+                if (account.Uuid.ToString() == model["id"]!.GetValue<string>() && account.Name == model["name"]!.GetValue<string>()) {
                     return true;
                 }
             }
@@ -108,12 +112,14 @@ namespace MinecraftLaunch.Modules.Models.Auth {
             var content = new {
                 capeId = capeId
             };
-            var result = await CapeAPI.AllowAnyHttpStatus().WithOAuthBearerToken(account.AccessToken).PutJsonAsync(content);
+            var result = await CapeAPI.AllowAnyHttpStatus()
+                .WithOAuthBearerToken(account.AccessToken)
+                .PutJsonAsync(content);
 
             var json = await result.GetStringAsync();
             if (!string.IsNullOrEmpty(json)) {
-                JObject model = new(json);
-                if (account.Uuid.ToString() == model["id"]!.ToString() && account.Name == model["name"]!.ToString()) {
+                JsonNode model = JsonNode.Parse(json)!;
+                if (account.Uuid.ToString() == model["id"]!.GetValue<string>() && account.Name == model["name"]!.GetValue<string>()) {
                     return true;
                 }
             }
@@ -128,7 +134,8 @@ namespace MinecraftLaunch.Modules.Models.Auth {
         /// <returns></returns>
         public static async ValueTask<bool> UsernameChangeAsync(this MicrosoftAccount account, string newName) {
             var fullUrl = $"{NameChangeAPI}{newName}";
-            var result = await fullUrl.WithOAuthBearerToken(account.AccessToken).PutAsync();
+            var result = await fullUrl.WithOAuthBearerToken(account.AccessToken)
+                .PutAsync();
 
             if (result.StatusCode is 200) {
                 return true;
@@ -144,11 +151,12 @@ namespace MinecraftLaunch.Modules.Models.Auth {
         /// <returns></returns>
         public static async ValueTask<bool> CheckNameIsUsableAsync(this MicrosoftAccount account, string newName) {
             var fullUrl = $"{NameChangeAPI}{newName}/available";
-            var res = (await fullUrl.WithOAuthBearerToken(account.AccessToken).GetStringAsync());
+            var json = await fullUrl.WithOAuthBearerToken(account.AccessToken)
+                .GetStringAsync();
 
-            if (!string.IsNullOrEmpty(res)) {
-                JObject objects = new(res);
-                if (objects["status"]!.ToString().Contains("NOT")) {
+            if (!string.IsNullOrEmpty(json)) {
+                JsonNode model = JsonNode.Parse(json)!;
+                if (model["status"]!.GetValue<string>().Contains("NOT")) {
                     return false;
                 }
             } else {

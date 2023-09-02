@@ -1,12 +1,12 @@
 ﻿using MinecraftOAuth.Authenticator;
 using MinecraftOAuth.Module.Base;
 using MinecraftLaunch.Modules.Models.Auth;
-using Natsurainko.Toolkits.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace MinecraftOAuth.Authenticator {
     /// <summary>
@@ -37,8 +37,10 @@ namespace MinecraftOAuth.Authenticator {
             this.Name = name;
             this.Uuid = uuid;
 
-            if (this.Uuid == default)
-                this.Uuid = GuidHelper.FromString(this.Name);
+            if (this.Uuid == default) {
+                using var md5 = MD5.Create();
+                this.Uuid = new Guid(md5.ComputeHash(Encoding.UTF8.GetBytes(this.Name)));
+            }
         }
 
         public string Name { get; set; }

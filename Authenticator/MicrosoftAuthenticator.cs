@@ -1,15 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using MinecraftOAuth.Models;
 using MinecraftOAuth.Module.Base;
 using MinecraftOAuth.Module.Enum;
 using MinecraftOAuth.Module.Models;
 using MinecraftLaunch.Modules.Enum;
 using MinecraftLaunch.Modules.Models.Auth;
-using Natsurainko.Toolkits.Network;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using MinecraftLaunch.Modules.Utils;
+using Flurl.Http;
+using System.Text.Json.Nodes;
 
 namespace MinecraftOAuth.Authenticator {
     /// <summary>
@@ -39,7 +37,7 @@ namespace MinecraftOAuth.Authenticator {
                 var res = await client.SendAsync(req);
 
                 string json = await res.Content.ReadAsStringAsync();
-                var codeResponse = JsonConvert.DeserializeObject<DeviceCodeResponse>(json);
+                var codeResponse = json.ToJsonEntity<DeviceCodeResponse>();
                 return codeResponse;
             }
         }
@@ -71,21 +69,27 @@ namespace MinecraftOAuth.Authenticator {
 
                     string tokenJson = await tokenRes.Content.ReadAsStringAsync();
 
-                    var tempTokenResponse = JsonConvert.DeserializeObject<TokenResponse>(tokenJson);
+                    var tempTokenResponse = JsonNode.Parse(tokenJson);
 
-                    if (tokenRes.StatusCode == HttpStatusCode.OK)
-                        tokenResponse = tempTokenResponse;
-
-                    if (tempTokenResponse.TokenType is "Bearer") {
-                        AccessToken = tempTokenResponse.AccessToken;
-                        RefreshToken = tempTokenResponse.RefreshToken;
+                    if (tokenRes.StatusCode == HttpStatusCode.OK) {
+                        tokenResponse = new() {
+                            AccessToken = tempTokenResponse!["access_token"]!.GetValue<string>(),
+                            RefreshToken = tempTokenResponse["refresh_token"]!.GetValue<string>(),
+                            ExpiresIn = tempTokenResponse["expires_in"]!.GetValue<int>(),
+                        };
+                    }
+                   
+                    if (tempTokenResponse["token_type"]?.GetValue<string>() is "Bearer") {
+                        AccessToken = tokenResponse.AccessToken;
+                        RefreshToken = tokenResponse.RefreshToken;
                         return tokenResponse;
                     }
 
                     await Task.Delay(pollingInterval);
                     timeRemaining = codeExpiresOn - DateTimeOffset.UtcNow;
                 }
-                throw new("登录操作已超时");
+
+                throw new TimeoutException("登录操作已超时");
             }
         }
 
@@ -110,9 +114,15 @@ namespace MinecraftOAuth.Authenticator {
             if (AuthType is AuthType.Refresh) {
                 progress.Report("开始获取 AccessToken");
                 var url = "https://login.live.com/oauth20_token.srf";
-                string authContent = $"client_id={ClientId}" + $"&refresh_token={RefreshToken}" + "&grant_type=refresh_token";
-                var result = await HttpWrapper.HttpPostAsync(url, authContent, "application/x-www-form-urlencoded");
-                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(await result.Content.ReadAsStringAsync());
+
+                var content = new {
+                    client_id = ClientId,
+                    refresh_token = RefreshToken,
+                    grant_type = "refresh_token",
+                };
+
+                var result = await url.PostUrlEncodedAsync(content);
+                var tokenResponse = (await result.GetStringAsync()).ToJsonEntity<TokenResponse>();
                 AccessToken = (tokenResponse?.AccessToken) ?? "None";
             }
 
@@ -122,10 +132,22 @@ namespace MinecraftOAuth.Authenticator {
 
             progress.Report("开始获取 XBL 令牌");
 
-            var xBLReqModel = new XBLAuthenticateRequestModel();
-            xBLReqModel.Properties.RpsTicket = xBLReqModel.Properties.RpsTicket.Replace("<access token>", AccessToken);
-            using var xBLReqModelPostRes = await HttpWrapper.HttpPostAsync($"https://user.auth.xboxlive.com/user/authenticate", JsonConvert.SerializeObject(xBLReqModel));
-            var xBLResModel = JsonConvert.DeserializeObject<XBLAuthenticateResponseModel>(await xBLReqModelPostRes.Content.ReadAsStringAsync());
+            var rpsTicket = $"d={AccessToken}";
+            var xblContent = new {
+                Properties = new {
+                    AuthMethod = "RPS",
+                    SiteName = "user.auth.xboxlive.com",
+                    RpsTicket = rpsTicket
+                },
+                RelyingParty = "http://auth.xboxlive.com",
+                TokenType = "JWT"
+            };
+            
+            using var xBLReqModelPostRes = await $"https://user.auth.xboxlive.com/user/authenticate"
+                .PostJsonAsync(xblContent);
+
+            var xBLResModel = (await xBLReqModelPostRes.GetStringAsync())
+                .ToJsonEntity<XBLAuthenticateResponseModel>();
 
             #endregion
 
@@ -133,33 +155,49 @@ namespace MinecraftOAuth.Authenticator {
 
             Report("开始获取 XSTS令牌");
 
-            var xSTSReqModel = new XSTSAuthenticateRequestModel();
-            xSTSReqModel.Properties.UserTokens.Add(xBLResModel!.Token);
+            var xstsContent = new {
+                Properties = new {
+                    SandboxId = "RETAIL",
+                    UserTokens = new[] {                   
+                        xBLResModel.Token
+                    }
+                },
+                RelyingParty = "rp://api.minecraftservices.com/",
+                TokenType = "JWT"
+            };
 
-            using var xSTSReqModelPostRes = await HttpWrapper.HttpPostAsync($"https://xsts.auth.xboxlive.com/xsts/authorize", JsonConvert.SerializeObject(xSTSReqModel));
-            var xSTSResModel = JsonConvert.DeserializeObject<XSTSAuthenticateResponseModel>(await xSTSReqModelPostRes.Content.ReadAsStringAsync());
+
+            using var xSTSReqModelPostRes = await $"https://xsts.auth.xboxlive.com/xsts/authorize".PostJsonAsync(xstsContent);
+            var xSTSResModel = (await xSTSReqModelPostRes.GetStringAsync()).ToJsonEntity<XSTSAuthenticateResponseModel>();
 
             #endregion
 
             #region Authenticate with Minecraft
 
             Report("开始获取 Minecraft账户基础信息");
-            string authenticateMinecraftPost =
-                $"{{\"identityToken\":\"XBL3.0 x={xBLResModel.DisplayClaims.Xui[0]["uhs"]};{xSTSResModel!.Token}\"}}";
+            var authenticateMinecraftPost = new {
+                identityToken = $"XBL3.0 x={xBLResModel.DisplayClaims.Xui[0]
+                .GetProperty("uhs")
+                .GetString()};{xSTSResModel!.Token}"
+            };
 
-            using var authenticateMinecraftPostRes = await HttpWrapper.HttpPostAsync($"https://api.minecraftservices.com/authentication/login_with_xbox", authenticateMinecraftPost);
-            string access_token = (string)JObject.Parse(await authenticateMinecraftPostRes.Content.ReadAsStringAsync())["access_token"]!;
+            using var authenticateMinecraftPostRes = await $"https://api.minecraftservices.com/authentication/login_with_xbox"
+                .PostJsonAsync(authenticateMinecraftPost);
+
+            string access_token = JsonNode.Parse(await authenticateMinecraftPostRes.GetStringAsync())!["access_token"]!
+                .GetValue<string>();
 
             #endregion
 
             #region Check with Game
             Report("开始检查游戏所有权");
-            var authorization = new Tuple<string, string>("Bearer", access_token!);
-
             bool hasGame = false;
             try {
-                using var gameHasRes = await HttpWrapper.HttpGetAsync("https://api.minecraftservices.com/entitlements/mcstore", authorization);
-                string json = await gameHasRes.Content.ReadAsStringAsync();
+                using var gameHasRes = await "https://api.minecraftservices.com/entitlements/mcstore"
+                    .WithHeader("Authorization", $"Bearer {access_token}")
+                    .GetAsync();
+
+                string json = await gameHasRes.GetStringAsync();
                 var itemArray = json.ToJsonEntity<GameHasCheckResponseModel>();
 
                 if (itemArray.Items != null) {
@@ -177,8 +215,13 @@ namespace MinecraftOAuth.Authenticator {
 
             if (hasGame) {
                 Report("开始获取 玩家Profile");
-                using var profileRes = await HttpWrapper.HttpGetAsync("https://api.minecraftservices.com/minecraft/profile", authorization);
-                var microsoftAuthenticationResponse = JsonConvert.DeserializeObject<MicrosoftAuthenticationResponse>(await profileRes.Content.ReadAsStringAsync());
+                using var profileRes = await "https://api.minecraftservices.com/minecraft/profile"
+                    .WithHeader("Authorization", $"Bearer {access_token}")
+                    .GetAsync();
+
+                var microsoftAuthenticationResponse = (await profileRes.GetStringAsync())
+                    .ToJsonEntity<MicrosoftAuthenticationResponse>();
+
                 Report("微软登录（非刷新验证）完成");
 
                 return new MicrosoftAccount {

@@ -1,22 +1,17 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace MinecraftOAuth.Module.Models {
     public class OwnershipItem {
-        [JsonProperty("name")] public string Name { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; }
 
-        [JsonProperty("signature")] public string Signature { get; set; }
+        [JsonPropertyName("signature")] public string Signature { get; set; }
     }
 
     public class GameHasCheckResponseModel {
-        [JsonProperty("items")] public List<OwnershipItem> Items { get; set; }
+        [JsonPropertyName("items")] public List<OwnershipItem> Items { get; set; }
 
-        [JsonProperty("signature")] public string Signature { get; set; }
+        [JsonPropertyName("signature")] public string Signature { get; set; }
 
-        [JsonProperty("keyId")] public string KeyId { get; set; }
+        [JsonPropertyName("keyId")] public string KeyId { get; set; }
     }
 }

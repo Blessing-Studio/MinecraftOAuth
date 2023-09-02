@@ -1,5 +1,4 @@
 ﻿using MinecraftLaunch.Modules.Models.Auth;
-using Natsurainko.Toolkits.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,14 +1,8 @@
-﻿using MinecraftLaunch.Modules.Models.Auth;
+﻿using Flurl.Http;
+using MinecraftLaunch.Modules.Models.Auth;
 using MinecraftLaunch.Modules.Utils;
 using MinecraftOAuth.Module.Base;
 using MinecraftOAuth.Module.Models;
-using Natsurainko.Toolkits.Network;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MinecraftOAuth.Authenticator {
     /// <summary>
@@ -48,7 +42,7 @@ namespace MinecraftOAuth.Authenticator {
         /// <returns></returns>
         public new async ValueTask<UnifiedPassAccount> AuthAsync(Action<string> func = default!) {
             string authUrl = $"{BaseApi}{ServerId}/authserver/authenticate";
-            var content = JsonConvert.SerializeObject(new {
+            var content = new {
                 agent = new {
                     name = "MinecraftLaunch",
                     version = 1.00
@@ -57,10 +51,10 @@ namespace MinecraftOAuth.Authenticator {
                 password = Password,
                 clientToken = null as string,
                 requestUser = true,
-            }, Formatting.Indented);
+            };
 
-            using var httpResponse = await HttpWrapper.HttpPostAsync(authUrl, content);
-            string userDataJson = await httpResponse.Content.ReadAsStringAsync();
+            using var httpResponse = await authUrl.PostJsonAsync(content);
+            string userDataJson = await httpResponse.GetStringAsync();
             var model = userDataJson.ToJsonEntity<YggdrasilResponse>();
 
             var user = model.UserAccounts.FirstOrDefault();
@@ -83,10 +77,10 @@ namespace MinecraftOAuth.Authenticator {
                 accessToken = account.AccessToken,
                 clientToken = account.ClientToken,
                 requestUser = true
-            }.ToJson();
+            };
 
-            using var responseMessage = await HttpWrapper.HttpPostAsync($"{BaseApi}{ServerId}/authserver/refresh", content);
-            string json = await responseMessage.Content.ReadAsStringAsync();
+            using var responseMessage = await $"{BaseApi}{ServerId}/authserver/refresh".PostJsonAsync(content);
+            string json = await responseMessage.GetStringAsync();
 
             YggdrasilResponse model = json.ToJsonEntity<YggdrasilResponse>();
             var user = model.UserAccounts.FirstOrDefault();
@@ -110,10 +104,10 @@ namespace MinecraftOAuth.Authenticator {
             var content = new {
                 accessToken = account.AccessToken,
                 clientToken = account.ClientToken,
-            }.ToJson();
+            };
 
-            using var responseMessage = await HttpWrapper.HttpPostAsync(url, content);
-            return responseMessage.IsSuccessStatusCode;
+            using var responseMessage = await url.PostJsonAsync(content);
+            return responseMessage.ResponseMessage.IsSuccessStatusCode;
         }
 
         /// <summary>
@@ -125,10 +119,10 @@ namespace MinecraftOAuth.Authenticator {
             var content = new {
                 username = UserName,
                 password = Password,
-            }.ToJson();
+            };
 
-            using var responseMessage = await HttpWrapper.HttpPostAsync(url, content);
-            return responseMessage.IsSuccessStatusCode;
+            using var responseMessage = await url.PostJsonAsync(content);
+            return responseMessage.ResponseMessage.IsSuccessStatusCode;
         }
     }
 }
